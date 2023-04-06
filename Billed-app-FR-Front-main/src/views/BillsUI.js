@@ -20,15 +20,24 @@ const row = (bill) => {
   }
 
 // const rows = (data) => {
-//   return (data && data.length) ? data.map(bill => row(bill)).join("") : ""// }
+//   return (data && data.length) ? data.map(bill => row(bill)).join("") : "" }
 
-const rows = (data) => {
+// const rows = (data) => {
+//   if (data && data.length) {
+//     data.sort((a, b) => {
+//     const dateA = Date.parse(a.date);
+//     const dateB = Date.parse(b.date);
+//     return dateA === dateB ? 0 : dateA < dateB ? 1 : -1;
+//     })
+//   }
+//   return data && data.length ? data.map((bill) => row(bill)).join('') : '';
+// }
+
+export const rows = (data) => {
   if (data && data.length) {
-    data.sort((a, b) => {
-    const dateA = Date.parse(a.date);
-    const dateB = Date.parse(b.date);
-    return dateA === dateB ? 0 : dateA < dateB ? 1 : -1;
-    })
+    data.sort(function(a, b){
+        return new Date(b.date) - new Date(a.date);
+      })
   }
   return data && data.length ? data.map((bill) => row(bill)).join('') : '';
 }
@@ -36,7 +45,7 @@ const rows = (data) => {
 export default ({ data: bills, loading, error }) => {
   
   const modal = () => (`
-    <div class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal fade" id="modaleFile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-testid="modalFile">
       <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
           <div class="modal-header">
