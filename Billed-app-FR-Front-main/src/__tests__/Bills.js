@@ -100,44 +100,40 @@ describe("Given I am connected as an employee", () => {
 
 // test integration GET
 
+// test d'intégration GET
 describe("Given I am a user connected as Employee", () => {
-  
-  describe("When I navigate to Bills page", () => {
-    
-    test("Then fetches bills from mock API GET", async () => {
-      
+  describe("When I navigate to Bills", () => {
+    test("fetches bills from mock API GET", async () => {
       localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
-    
-      await waitFor(() => screen.getByText("Mes notes de frais"));
-
-      const type = await waitFor(() => screen.getByText("Type"));
-      expect(type).toBeTruthy();
-
-      const nom = screen.getByText("Nom");
-      expect(nom).toBeTruthy();
-
-      expect(screen.getByTestId("billDate")).toBeTruthy();
-
-      const montant = screen.getByText("Montant");
-      expect(montant).toBeTruthy();
-
-      const statut = screen.getByText("Statut");
-      expect(statut).toBeTruthy();
-
-      const actions = screen.getByText("Actions");
-      expect(actions).toBeTruthy();
-    });
-
-    describe("When an error occurs on API", () => {
-      beforeEach(() => {
-        jest.spyOn(mockStore, "bills");
-        Object.defineProperty(window, "localStorage", { value: localStorageMock });
-        window.localStorage.setItem("user", JSON.stringify({ type: "Employee", email: "a@a" }));
-        const root = document.createElement("div");
-        root.setAttribute("id", "root");
-        document.body.appendChild(root);
-        router();
-      });
+      const root = document.createElement("div")
+      root.setAttribute("id", "root")
+      document.body.append(root)
+      router()
+      window.onNavigate(ROUTES_PATH.Bills)
+      await waitFor(() => screen.getByText("Mes notes de frais"))
+      const contentPending  = await screen.getByText("pending")
+      expect(contentPending).toBeTruthy()
+      const contentType  = await screen.getAllByText("Hôtel et logement")
+      expect(contentType).toBeTruthy()
+      expect(screen.getAllByTestId("icon-eye")).toBeTruthy()
+    })
+  describe("When an error occurs on API", () => {
+    beforeEach(() => {
+      jest.spyOn(mockStore, "bills")
+      Object.defineProperty(
+          window,
+          'localStorage',
+          { value: localStorageMock }
+      )
+      window.localStorage.setItem('user', JSON.stringify({
+        type: 'Employee',
+        email: "a@a"
+      }))
+      const root = document.createElement("div")
+      root.setAttribute("id", "root")
+      document.body.appendChild(root)
+      router()
+    })
 
       test("Then fetches bills from an API and fails with 404 message error", async () => {
         mockStore.bills.mockImplementationOnce(() => ({
